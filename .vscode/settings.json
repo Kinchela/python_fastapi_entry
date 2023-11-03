@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths" : [
+      "/home/chikara/python_fastapi_entry/.dockerenv/lib/python3.11/site-packages/"
+    ],
+}
