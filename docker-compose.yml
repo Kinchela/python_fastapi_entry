@@ -7,21 +7,28 @@ services:
       - .dockervenv:/src/.venv
       - .:/src
     ports:
-      - 8000:8000 # ホストマシンのポート8000を、docker内のポート8000に接続する
+      - 8000:8000 #Connect host machine's port 8000 to docker's port 8000.
     # depends_on:
     #   - db
     stdin_open: true
     tty: true
-  # db:
-  #   image: mysql:latest
-  #   command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-  #   volumes:
-  #     - db-data:/var/lib/mysql
-  #   ports:
-  #     - 3306:3306
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #     MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-  #     TZ: "Asia/Tokyo"
-  # volumes:
-  #   db-data:
+  db: 
+  #docker compose exec db mysql db(last db is the MYSQL_DATABASE) 
+  #to start the MySQL client
+  
+  #docker compose exec web poetry add sqlalchemy aiomysql
+    image: mysql:latest
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes' #Create a root account without password.
+      MYSQL_DATABASE: 'db' #Set the db as the initial database.
+      TZ: "Asia/Tokyo" #Set the timezone to JPN time.
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    #To start the server with the default authentication plugin set to caching_sha2_password.
+    #This causes the caching_sha2_password plugin to be used by default for new account.
+    ports: #Connect host machine's port 3306 to docker's port 3306.
+      - 3306:3306
+volumes:
+  mysql_data:
